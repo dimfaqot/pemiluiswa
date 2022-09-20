@@ -9,8 +9,8 @@
                     <div class="card">
                         <div class="card-body">
 
-                            <div class="text-center mb-3">Halaman Login</div>
-                            <form action="<?= base_url('login'); ?>/auth" method="post">
+                            <div class="text-center mb-3">Halaman Login Kpu</div>
+                            <form action="<?= base_url('login'); ?>" method="post">
                                 <?= csrf_field() ?>
                                 <div class="input-group input-group-sm mb-3">
                                     <span class="input-group-text" style="width:100px;font-size:small;">Username</span>

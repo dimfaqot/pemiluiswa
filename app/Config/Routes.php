@@ -36,6 +36,28 @@ $routes->set404Override();
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
+$routes->get('login', 'Login::index');
+$routes->post('login', 'Login::auth');
+$routes->get('login/logout', 'Login::logout');
+
+
+$routes->get('vote', 'Vote::index');
+
+$routes->get('dashboard', 'Dashboard::index');
+$routes->get('dashboard/kategori', 'Dashboard::kategori');
+$routes->post('dashboard/updatekategori', 'Dashboard::updatekategori');
+$routes->get('dashboard/calon', 'Dashboard::calon');
+$routes->get('dashboard/tambahcalon', 'Dashboard::tambahcalon');
+$routes->post('dashboard/submitcalon', 'Dashboard::submitcalon');
+$routes->get('dashboard/editcalon/(:any)', 'Dashboard::editcalon/$1');
+$routes->post('dashboard/updatecalon', 'Dashboard::updatecalon');
+$routes->post('dashboard/deleteecalon/(:any)', 'Dashboard::deleteecalon/$1');
+
+$routes->post('dashboard/absen', 'Dashboard::absen');
+$routes->get('dashboard/putra', 'Dashboard::putra');
+$routes->get('dashboard/putri', 'Dashboard::putri');
+$routes->post('dashboard/vote', 'Dashboard::vote');
+$routes->get('dashboard/statistik', 'Dashboard::statistik');
 
 /*
  * --------------------------------------------------------------------

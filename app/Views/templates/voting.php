@@ -4,10 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <title><?= $judul; ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <style>
         .middlecenter {
             padding-left: 12px;
@@ -29,11 +28,112 @@
             left: 0px;
             /* background: rgba(175, 178, 180, 0.2); */
         }
+
+        .sukses {
+            z-index: 99999;
+        }
+
+        .wrapper {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .checkmark {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #fff;
+            stroke-miterlimit: 10;
+            margin: 10% auto;
+            box-shadow: inset 0px 0px 0px green;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both
+        }
+
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards
+        }
+
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0
+            }
+        }
+
+        @keyframes scale {
+
+            0%,
+            100% {
+                transform: none
+            }
+
+            50% {
+                transform: scale3d(1.1, 1.1, 1)
+            }
+        }
+
+        @keyframes tick {
+            to {
+                transform: rotate(359deg);
+            }
+        }
+
+
+
+
+        @keyframes fill {
+            100% {
+                box-shadow: inset 0px 0px 0px 30px green
+            }
+        }
+
+        .title {
+            border-radius: 10px 10px 0px 0px;
+            background-color: #29B6F6;
+            color: #E1F5FE;
+            font-weight: 600;
+            font-size: medium;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            padding-bottom: 4px;
+            text-align: center;
+        }
+
+        .cover {
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            background-color: #fff;
+            z-index: 900;
+        }
     </style>
-    <title>Login</title>
 </head>
 
-<body>
+<body class="bg-dark" style="margin-bottom:100px;">
+    <?php
+
+    ?>
+
+    <?php if ($judul !== 'Vote') : ?>
+        <?php if (!voted($judul)) : ?>
+            <div class="cover">
+                <div class="middlecenter">
+
+                    <button type="button" style="width:300px;height:100px; font-size:xx-large;" class="btn btn-primary reload" type="button">GO</button>
+
+                </div>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
     <!-- gagal php -->
     <?php if (session()->getFlashdata('gagal')) : ?>
 
@@ -52,6 +152,19 @@
             </div>
         </div>
     <?php endif; ?>
+
+
+    <?php if (session()->getFlashdata('sukses')) : ?>
+        <div class="sukses middlecenter">
+            <div class="wrapper"> <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                </svg>
+            </div>
+        </div>
+    <?php endif; ?>
+
+
     <?= $this->renderSection('content'); ?>
 
     <nav class="fixed-bottom">
@@ -75,76 +188,51 @@
     </nav>
     <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script src="//cdn.ckeditor.com/4.19.1/standard/ckeditor.js"></script>
     <script>
+        async function post(url = '', data = {}) {
+
+            const response = await fetch('<?= base_url(); ?>/' + url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            return response.json(); // parses JSON response into native JavaScript objects
+        }
+
+
+        setTimeout(() => {
+            $('.sukses').fadeOut();
+        }, 1500);
+
         $(".btnclose").click(function() {
             $('.gagal').hide();
         })
 
+        $(document).on('click', '.reload', function() {
+            location.reload();
+        })
 
-        <?php if ($judul == 'Statistik') : ?>
-            const partais = <?php echo json_encode($data); ?>;
-            let arr = ['putra', 'putri'];
-        <?php endif; ?>
-
-        for (let i = 0; i < arr.length; i++) {
-            let arrpartais = partais[arr[i]].partai;
-            let xValues = [];
-            let yValues = [];
-
-            for (let p = 0; p < arrpartais.length; p++) {
-                xValues.push(arrpartais[p].singkatan_partai);
-                yValues.push(arrpartais[p].suara);
-            }
-
-            let barColors = ["red", "green", "blue", "orange", "brown"];
-
-            new Chart("myChart" + arr[i], {
-                type: "bar",
-                data: {
-                    labels: xValues,
-                    datasets: [{
-                        backgroundColor: barColors,
-                        data: yValues
-                    }]
-                },
-                options: {
-                    legend: {
-                        display: false
-                    },
-                    title: {
-                        display: true,
-                        text: "PEROLEHAN SUARA PEMILU ISWA " + partais[arr[i]].pondok.toUpperCase() + " TAHUN <?= date('Y'); ?>"
+        $(document).on('click', '.vote', function(e) {
+            e.preventDefault();
+            let idpartai = $(this).data('idpartai');
+            let idcapres = $(this).data('idcapres');
+            let username = $(this).data('username');
+            let poin = $(this).data('poin');
+            post('dashboard/vote', {
+                    idpartai,
+                    idcapres,
+                    poin,
+                    username
+                })
+                .then(res => {
+                    if (res.status == '200') {
+                        location.reload();
                     }
-                }
-            });
-        }
-
-        for (let i = 0; i < arr.length; i++) {
-            var xValues = ["Memilih", "Golput"];
-            var yValues = [partais[arr[i]].selesai.jumlah, partais[arr[i]].belum.jumlah];
-            var barColors = [
-                "#00aba9",
-                "#b91d47"
-            ];
-            new Chart("golput" + arr[i], {
-                type: "pie",
-                data: {
-                    labels: xValues,
-                    datasets: [{
-                        backgroundColor: barColors,
-                        data: yValues
-                    }]
-                },
-                options: {
-                    title: {
-                        display: true,
-                        text: "KEIKUTSERAAIN PEMILU ISWA " + partais[arr[i]].pondok.toUpperCase() + " TAHUN <?= date('Y'); ?>"
-                    }
-                }
-            });
-        };
+                })
+        })
     </script>
-</body>
 
-</html>
+</body>
