@@ -36,11 +36,18 @@ class Login extends BaseController
                 return redirect()->to(base_url('login'));
             } else {
                 $r = $user->join('role', 'role_id=role.id')->where('username', $username)->first();
+                $pondok = 'Putra';
+
+                if ($q['gender'] == 'P') {
+                    $pondok = 'Putri';
+                }
                 session()->set([
                     'id' => $q['id'],
                     'nama' => $q['nama'],
                     'username' => $q['username'],
+                    'gender' => $q['gender'],
                     'role_id' => $q['role_id'],
+                    'pondok' => $pondok,
                     'role' => $r['role']
                 ]);
                 if ($r['role'] == 'Kpu' || $r['role'] == "Super Admin") {

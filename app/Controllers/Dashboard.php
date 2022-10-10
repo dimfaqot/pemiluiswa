@@ -288,6 +288,22 @@ class Dashboard extends BaseController
             }
             die;
         }
+        if ($order == 'cariabsenkategori') {
+
+            $mod = \App\Models\Users::class;
+            $mod = new $mod;
+
+            $q = $mod->select('nama,username')->like('nama', $val, 'both')->find();
+
+
+
+            $res = [
+                'status' => '200',
+                'data' => $q
+            ];
+            echo json_encode($res);
+            die;
+        }
 
         $pemilih = absen($order, $gender,  $id, $kategori, $val);
 
@@ -303,7 +319,7 @@ class Dashboard extends BaseController
     {
         helper('functions');
         $res = votingpage('Putra');
-
+        // dd($res);
         $data = [
             'judul' => 'Putra',
             'data' => $res

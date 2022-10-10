@@ -146,6 +146,7 @@ function absen($order, $gender, $id, $kategori = null, $val = '')
         $selesai = $capres->where("id", $id)->first();
     }
 
+
     $selesai = $capres->where("pondok", $pondok)->orderBy('tahun', date('Y'))->orderBy('id', 'ASC')->first();
 
 
@@ -157,12 +158,13 @@ function absen($order, $gender, $id, $kategori = null, $val = '')
     }
 
 
-
     if ($order == 'cariabsen' || $order == 'cariabsenkategori') {
+
         $mod = \App\Models\Users::class;
         $mod = new $mod;
         $q = [];
         $where = explode(',', $sudahmencoblos);
+
         $query = $mod->select('username,nama')->whereNotIn('username', $where)->where('gender', $gender)->like("nama", $val, 'both')->find();
 
         if ($kategori == 'Santri') {
@@ -181,7 +183,9 @@ function absen($order, $gender, $id, $kategori = null, $val = '')
                 }
             }
         } else {
+
             $username = kategori($gender, $kategori);
+
             // dd($sudahmencoblos);
             foreach ($query as $i) {
                 if (in_array($i['username'], $username['data'])) {
@@ -189,6 +193,8 @@ function absen($order, $gender, $id, $kategori = null, $val = '')
                 }
             }
         }
+
+
         return $q;
     }
     if ($order == 'antrian') {
@@ -206,6 +212,7 @@ function absen($order, $gender, $id, $kategori = null, $val = '')
             }
         } else if ($kategori == 'Karyawan') {
             $sudahmencoblos = $sudahmencoblos . ',' . spesial();
+
             $where = explode(',', $sudahmencoblos);
             $query = $mod->select('username,nama')->whereNotIn('username', $where)->where('gender', $gender)->limit(10)->find();
             foreach ($query as $i) {
@@ -335,6 +342,59 @@ function votingpage($pondok)
                 }
             }
         }
+    } else if ($kategori == 'Karyawan') {
+        $absenL = $mod->where("pondok", 'Putra')->orderBy('tahun', date('Y'))->orderBy('id', 'ASC')->first();
+        $absenP = $mod->where("pondok", 'Putri')->orderBy('tahun', date('Y'))->orderBy('id', 'ASC')->first();
+
+        $expL = explode(",", $absenL['selesai']);
+        $expP = explode(",", $absenP['selesai']);
+
+        $belum = ['jml' => 2, 'pondok' => 'Putra Putri'];
+
+        $username = $absenL['absen'];
+
+        if ($pondok == 'Putri') {
+            $username = $absenP['absen'];
+        }
+
+        if (in_array($username, $expL)) {
+            $belum['jml'] = 1;
+            $belum['pondok'] = 'putri';
+        }
+
+        if (in_array($username, $expP)) {
+            $belum['jml'] = 1;
+            $belum['pondok'] = 'putra';
+        }
+
+
+
+        if ($belum['jml'] == 2) {
+            $partai[] = [
+                'pondok' => 'Putra',
+                'idcapres' =>  $absenL['id'],
+                'partai' => $mod->where("pondok", 'Putra')->where("tahun", date('Y'))->orderBy('no_partai', 'ASC')->find()
+            ];
+            $partai[] = [
+                'pondok' => 'Putri',
+                'idcapres' =>  $absenP['id'],
+                'partai' => $mod->where("pondok", 'Putri')->where("tahun", date('Y'))->orderBy('no_partai', 'ASC')->find()
+            ];
+        } else if ($belum['jml'] == 1) {
+            if ($belum['pondok'] == 'putra') {
+                $partai[] = [
+                    'pondok' => 'Putra',
+                    'idcapres' =>  $absenL['id'],
+                    'partai' => $mod->where("pondok", 'Putra')->where("tahun", date('Y'))->orderBy('no_partai', 'ASC')->find()
+                ];
+            } else {
+                $partai[] = [
+                    'pondok' => 'Putri',
+                    'idcapres' =>  $absenP['id'],
+                    'partai' => $mod->where("pondok", 'Putri')->where("tahun", date('Y'))->orderBy('no_partai', 'ASC')->find()
+                ];
+            }
+        }
     } else {
         $partai[] = [
             'pondok' => $pondok,
@@ -371,26 +431,37 @@ function poin($kategori)
     return $poin;
 }
 
-function voted($pondok)
+function voted($pondok, $username, $kategori)
 {
 
     $mod = \App\Models\Capres::class;
     $mod = new $mod;
 
-    $absen = $mod->where("pondok", $pondok)->orderBy('tahun', date('Y'))->orderBy('id', 'ASC')->first();
+    $absenL = $mod->where("pondok", 'Putra')->orderBy('tahun', date('Y'))->orderBy('id', 'ASC')->first();
+    $absenP = $mod->where("pondok", 'Putri')->orderBy('tahun', date('Y'))->orderBy('id', 'ASC')->first();
 
-    $voted = explode(",", $absen['selesai']);
-    $ndalem = ndalem($pondok);
+    $votedL = explode(",", $absenL['selesai']);
+    $votedP = explode(",", $absenP['selesai']);
 
-    if ($ndalem['status'] === true) {
-        if (count($ndalem['sudah']) < 2) {
-            return true;
-        }
-    } else {
-        if (in_array($absen['absen'], $voted)) {
+    if ($kategori == 'Ndalem' || $kategori == 'Karyawan') {
+        if (in_array($username, $votedL) && in_array($username, $votedP)) {
             return false;
         } else {
             return true;
+        }
+    } else {
+        if ($pondok == 'Putra') {
+            if (in_array($username, $votedL)) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            if (in_array($username, $votedP)) {
+                return false;
+            } else {
+                return true;
+            }
         }
     }
 }
@@ -622,7 +693,7 @@ function voteusername()
     $poin = poin($kategori);
 
     $partai = [];
-    if ($kategori == 'Ndalem') {
+    if ($kategori == 'Ndalem' || $kategori == 'Karyawan') {
         $cL = $capres->where('pondok', 'Putra')->where('tahun', date('Y'))->orderBy('id', 'ASC')->first();
         $cP = $capres->where('pondok', 'Putri')->where('tahun', date('Y'))->orderBy('id', 'ASC')->first();
 

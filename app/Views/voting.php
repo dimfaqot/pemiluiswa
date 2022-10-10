@@ -5,6 +5,16 @@
 <?php
 // $ndalem = ndalem($judul);
 // dd($data);
+
+if ($data['kategori'] == 'Ndalem' || $data['kategori'] == 'Karyawan') {
+    if (count($data['partai']) == 1) {
+        $pondoksudah = 'putra';
+
+        if ($data['partai'][0]['pondok'] == 'Putra') {
+            $pondoksudah = 'putra';
+        }
+    }
+}
 ?>
 <div class="container mt-3">
     <div class="row justify-content-center mb-3">
@@ -18,32 +28,32 @@
         <div class="col-md-5">
             <div class="card bg-info text-light">
                 <div class="card-body text-center">
-                    <?= $data['pemilih']['nama']; ?>
+                    <?= $data['pemilih']['nama']; ?>/<?= $data['kategori']; ?>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card bg-info text-light">
                 <div class="card-body text-center">
-                    <?= $data['pemilih']['sub']; ?>
+                    Poin: <?= $data['poin']; ?>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
             <div class="card bg-info text-light">
                 <div class="card-body text-center">
-                    <?= $data['pemilih']['kecamatan']; ?>
+                    <?= $data['pemilih']['sub']; ?>
                 </div>
             </div>
         </div>
     </div>
     <?php
     $ndalem = ndalem($judul);
-    if ($ndalem['status']) : ?>
+    if ($data['kategori'] == 'Ndalem' || $data['kategori'] == 'Karyawan') : ?>
         <?php if (count($data['partai']) == 1) : ?>
             <div class="card mb-3">
                 <div class="card-body text-center">
-                    ANDA SUDAH MEMILIH CAPRES/CAWAPRES PONDOK <?= strtoupper($ndalem['sudah'][0]); ?>
+                    ANDA SUDAH MEMILIH CAPRES/CAWAPRES PONDOK <?= strtoupper($pondoksudah); ?>
                 </div>
             </div>
         <?php endif; ?>

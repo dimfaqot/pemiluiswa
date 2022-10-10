@@ -18,8 +18,16 @@ class Vote extends BaseController
     public function index()
     {
         helper('functions');
+        $upstain = kategori(session('gender'), 'Upstain');
+        $hak = true;
+
+        if (in_array(session('username'), $upstain['data'])) {
+            $hak = false;
+        }
+
         $data = [
             'judul' => 'Vote',
+            'upstain' => $hak,
             'data' => voteusername()
         ];
         return view('vote', $data);

@@ -124,7 +124,7 @@
     ?>
 
     <?php if ($judul !== 'Vote') : ?>
-        <?php if (!voted($judul)) : ?>
+        <?php if (!voted($judul, $data['pemilih']['username'], $data['kategori'])) : ?>
             <div class="cover">
                 <div class="middlecenter">
 
