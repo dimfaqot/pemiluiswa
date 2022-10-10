@@ -221,8 +221,9 @@ function absen($order, $gender, $id, $kategori = null, $val = '')
                 }
             }
         } else {
-            $username = kategori($gender, $kategori);
 
+            $username = kategori($gender, $kategori);
+            dd($username);
             foreach ($query as $i) {
                 if (in_array($i['username'], $username['data'])) {
                     $q[] = $i;

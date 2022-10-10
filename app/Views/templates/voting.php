@@ -123,17 +123,7 @@
 
     ?>
 
-    <?php if ($judul !== 'Vote') : ?>
-        <?php if (!voted($judul, $data['pemilih']['username'], $data['kategori'])) : ?>
-            <div class="cover">
-                <div class="middlecenter">
 
-                    <button type="button" style="width:300px;height:100px; font-size:xx-large;" class="btn btn-primary reload" type="button">GO</button>
-
-                </div>
-            </div>
-        <?php endif; ?>
-    <?php endif; ?>
     <!-- gagal php -->
     <?php if (session()->getFlashdata('gagal')) : ?>
 
